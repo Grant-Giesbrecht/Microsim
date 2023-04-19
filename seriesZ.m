@@ -6,7 +6,7 @@ function mse = seriesZ(Zser, freqs)
 	% Create matrix class
 	mse = mselement(freqs);
 	
-	msd = msdescriptor('SER_ELNT');
+	msd = msdescriptor('SER_ELMT');
 	%msd.params.() = EDIT PARAMS FIELD HERE
 
 	if numel(Zser) == 1
