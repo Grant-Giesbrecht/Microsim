@@ -6,7 +6,6 @@ classdef msdescriptor < handle
 		classifier % STR    Desciption such as 'SERIES_ELEMENT', etc
 		abcd       % <num>  ABCD parameters of this element alone
 		freqs      % <num>  Frequencies over which ABCD are defined
-		components % <desc> Other desc objects (if this isn't a base component) TODO: Remove?
 		node1      % num    Name of port 1 node (Will change when combined with other elements)
 		node2      % num    Name of port 2 node (will change when combined with other elements)
 		
@@ -44,7 +43,7 @@ classdef msdescriptor < handle
 			tf = true;
 			
 			% Find classifier
-			if strcmp(obj.classifier, 'SER_EL')
+			if strcmp(obj.classifier, 'SER_ELMT')
 				
 				% Get fields
 				keys = ccell2mat(fields(obj.params));
@@ -55,7 +54,7 @@ classdef msdescriptor < handle
 					tf = false;
 					return;
 				end
-			elseif strcmp(obj.classifier, 'SER_CAP')
+			elseif strcmp(obj.classifier, 'SER_CAP') || strcmp(obj.classifier, 'PAL_CAP')
 				
 				% Get fields
 				keys = ccell2mat(fields(obj.params));
@@ -69,7 +68,7 @@ classdef msdescriptor < handle
 					tf = false;
 					return;
 				end
-			elseif strcmp(obj.classifier, 'SER_IND')
+			elseif strcmp(obj.classifier, 'SER_IND') || strcmp(obj.classifier, 'PAL_IND')
 				
 				% Get fields
 				keys = ccell2mat(fields(obj.params));
@@ -83,7 +82,7 @@ classdef msdescriptor < handle
 					tf = false;
 					return;
 				end
-			elseif strcmp(obj.classifier, 'SER_RES')
+			elseif strcmp(obj.classifier, 'SER_RES') || strcmp(obj.classifier, 'PAL_RES')
 				
 				% Get fields
 				keys = ccell2mat(fields(obj.params));
@@ -93,6 +92,21 @@ classdef msdescriptor < handle
 				
 				% Throw error if unrecongized fields exist
 				if numel(keys) > 1
+					warning("Unrecongnized fields in 'params'!");
+					tf = false;
+					return;
+				end
+			elseif strcmp(obj.classifier, 'TLIN')
+				
+				% Get fields
+				keys = ccell2mat(fields(obj.params));
+				
+				% Check that expected fields are present
+				tf = tf && any(keys == "Z0");
+				tf = tf && any(keys == "theta_rad");
+				
+				% Throw error if unrecongized fields exist
+				if numel(keys) > 2
 					warning("Unrecongnized fields in 'params'!");
 					tf = false;
 					return;
