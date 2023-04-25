@@ -12,9 +12,9 @@ classdef msdescriptor < handle
 		% Optional parameters
 		params     % struct Struct with fields describing parameters used to create this object
 				   %   Examples:
-				   %      f0              R
+				   %                      R
 				   %	  Z0              L
-				   %      len_deg         C
+				   %      theta_rad       C
 
 	end
 	
@@ -25,7 +25,6 @@ classdef msdescriptor < handle
 			obj.freqs = [];
 			obj.node1 = 1;
 			obj.node2 = 2;
-			obj.components = [];
 			
 			obj.params = struct();
 		end

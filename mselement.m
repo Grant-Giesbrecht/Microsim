@@ -12,6 +12,9 @@ classdef mselement < handle
 	end
 	
 	methods
+		
+		%% Initialization Functions
+		
 		function obj = mselement(freqs)
 			obj.abcd = zeros(2, 2, numel(freqs));
 			obj.freqs = freqs;
@@ -36,6 +39,8 @@ classdef mselement < handle
 			% Add to list
 			obj.desc = desc;
 		end
+		
+		%% Modification Functions
 		
 		function series(obj, mse)
 			
@@ -127,6 +132,60 @@ classdef mselement < handle
 			obj.abcd(2, 2, :) = Dpall;
 			
 		end
+		
+		%% Data Access Functions
+		
+		function [S, Z0] = S(obj, Z0)
+		% S Calculates the S parameters of the object
+		%
+		%	S() Returns the S parameters normalized to 50 ohms
+		%
+		%	S(Z0) Returns the S parameters normalized to Z0.
+		%
+		% See also: ms_abcd2s
+			
+			% Check optional arguments
+			if ~exist('Z0', 'var')
+				Z0 = 50;
+			end
+			
+			[S, Z0] = ms_abcd2s(obj.abcd, Z0);
+			
+		end
+		
+		function zin = Zin(obj, Zterm)
+		% ZIN Calcualtes the input impedance of the network
+		%
+		%	ZIN() Calcualtes the input impedance of the network at port 1,
+		%	terminating port 2 in an open circuit.
+		%
+		%	ZIN(Zterm) Calcualtes the input impedance of the network at port 1,
+		%	terminating port 2 in Zterm.
+		%
+		
+			% Check for optional parameters
+			if ~exist('Zterm', 'var')
+				Zterm = NaN;
+			end
+			
+			% Retrieve ABCD components
+			A = obj.abcd(1,1,:);
+			B = obj.abcd(1,2,:);
+			C = obj.abcd(2,1,:);
+			D = obj.abcd(2,2,:);
+			
+			% Calculate output impedance
+			if isnan(Zterm)
+				zin = A./C;
+			else
+				zin = (Zterm.*A + B)./(Zterm.*C + D);
+			end
+			
+			% Fix dimensions
+			zin = permute(zin, [1, 3, 2]);
+		end
+		
+		%% Viewer Functions
 		
 		function [tstr, mt] = table(obj)
 			
