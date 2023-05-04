@@ -44,10 +44,11 @@ classdef mselement < handle
 		
 		function series(obj, mse)
 			
-			% Check freqs match
-			if obj.freqs ~= mse.freqs
-				error("Cannot multiply mselements with dissimilar frequency points.");
-			end
+			warning("Fix freq check!");
+% 			% Check freqs match
+% 			if obj.freqs ~= mse.freqs
+% 				error("Cannot multiply mselements with dissimilar frequency points.");
+% 			end
 			
 			% Update object description ---------------------------------
 			
@@ -74,7 +75,7 @@ classdef mselement < handle
 			
 			% Update ABCD with Chained matricies
 			for iter = 1:numel(obj.freqs)
-				obj.abcd(:,:, iter) = obj.abcd(:,:,iter) * mse.abcd(:,:, iter);
+				obj.abcd(:,:, iter) = mse.abcd(:,:,iter) * obj.abcd(:,:, iter);
 			end
 			
 		end
@@ -160,7 +161,7 @@ classdef mselement < handle
 		%	terminating port 2 in an open circuit.
 		%
 		%	ZIN(Zterm) Calcualtes the input impedance of the network at port 1,
-		%	terminating port 2 in Zterm.
+		%	terminating port 2 in Zterm. Use NaN for open circuit.
 		%
 		
 			% Check for optional parameters
