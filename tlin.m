@@ -22,10 +22,21 @@ function mse = tlin(Z0, theta, freqs, use_degrees)
 
 	% Update ABCD matrix
 	count = 0;
+	theta_n = theta(1);
+	Z0_n = Z0(1);
 	for f = freqs
 		count = count + 1;
-		mse.abcd(:,:,count) = [cos(theta), sqrt(-1)*Z0*sin(theta);...
-		sqrt(-1)/Z0*sin(theta), cos(theta)];
+		
+		% Get theta, Z0 value
+		if numel(theta) > 1
+			theta_n = theta(count);
+		end
+		if numel(Z0) > 1
+			Z0_n = Z0(count);
+		end
+		
+		mse.abcd(:,:,count) = [cos(theta_n), sqrt(-1)*Z0_n*sin(theta_n);...
+		1i/Z0_n*sin(theta_n), cos(theta_n)];
 	end
 	
 	% Add descriptor to MSE
