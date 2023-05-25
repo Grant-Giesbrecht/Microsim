@@ -134,7 +134,64 @@ classdef mselement < handle
 			
 		end
 		
+		%% Analysis Functions
+		%
+		% These functions perform circuit analysis with the network,
+		% performing operations more involved than the relatively
+		% straightforward data access of the group below.
+		
+		function zin = Zin_along(obj, Z0, theta, Zterm, use_degrees)
+		% ZIN_ALONG Calculates the input impedance along the line at
+		% multiple locations.
+		%
+		%	ZIN_ALONG(Z0, theta) Add a transmission line of
+		%	characteristic impedance Z0 and electrical length theta and
+		%	measure the input impedance. theta is expected to have multiple
+		%	values, so multiple input impedances will be shown. This can be
+		%	used to see how the input impedance changes across a
+		%	transmission line. When calculating input impedance, the 
+		%	network is terminated in an open circuit. NOTE: This does *NOT*
+		%	modify the network. Although transmission lines are 'added' for
+		%	the point of calculations, these additions are temporary.
+		%
+		%	ZIN_ALONG(Z0, theta, freqs, Zterm) Specify the termination
+		%	impedance when cacluating input impedance as Zterm.
+		%
+		%	ZIN_ALONG(Z0, theta, freqs, Zterm, use_degrees) If use_degrees is
+		%	true, theta is expected in degree instead of radians.
+		%
+		% Returns the input impedance for each theta value.
+			
+			% Check for optional parameters
+			if ~exist('Zterm', 'var')
+				Zterm = NaN;
+			end
+			if ~exist('use_degrees', 'var')
+				use_degrees = false;
+			end
+			
+			% Initialize output variable
+			zin = zeros(1, numel(theta));
+			
+			% Calculate Zin for each theta
+			idx = 0;
+			for t = theta
+				idx = idx + 1;
+				
+				% Create a copy of the object and add TLIN
+				subnet = copyh(obj);
+				subtlin = tlin(Z0, t, obj.freqs, use_degrees);
+				subnet.series(subtlin);
+				
+				% Calculate input impedance
+				zin(idx) = subnet.Zin(Zterm);
+			end
+			
+		end
+		
 		%% Data Access Functions
+		%
+		% These functions access data about the mselement object.
 		
 		function [S, Z0] = S(obj, Z0)
 		% S Calculates the S parameters of the object
